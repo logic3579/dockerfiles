@@ -1,6 +1,7 @@
 ## dockerfiles
 
-[![make test](https://img.shields.io/badge/Build_Status-passing-brightgrey.svg?logo=github)](https://github.com/yakir3/gitbook/actions)
+[![make test](https://img.shields.io/github/actions/workflow/status/yakir3/gitbook/main.yml?label=actions&logo=github&logoColor=white)](https://github.com/yakir3/gitbook/actions/workflows/)
+
 
 This is a repo to hold various Dockerfiles for images.
 
