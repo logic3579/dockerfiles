@@ -1,5 +1,5 @@
 # command to run network-tools
-# docker run -it --rm --name test -d yakirinp/network-tools
+# docker run -it --rm --name test -d yakir3/network-tools
 #
 
 FROM debian:sid-slim

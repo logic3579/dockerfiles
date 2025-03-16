@@ -3,9 +3,8 @@ set -e
 set -o pipefail
 
 CONTAINER_CMD=$(command -v docker || command -v podman)
-
 SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-REPO_URL="${REPO_URL:-docker.io/yakirinp}"
+REPO_URL="${REPO_URL:-docker.io/yakir3}"
 JOBS=${JOBS:-2}
 
 ERRORS="$(pwd)/errors"
@@ -73,7 +72,7 @@ main(){
         parallel --tag --verbose --ungroup -j"${JOBS}" "$SCRIPT" dofile "{1}" ::: "${files[@]}"
 
         if [[ ! -f "$ERRORS" ]]; then
-                echo "No errors, hooray!"
+                echo "No errors."
         else
                 echo "[ERROR] Some images did not build correctly, see below." >&2
                 echo "These images failed: $(cat "$ERRORS")" >&2

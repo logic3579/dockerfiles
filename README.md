@@ -22,8 +22,8 @@ This is a repo to hold various Dockerfiles for images.
 $ make help
 all                            Build all and push
 build                          Builds all the dockerfiles in the repository.
-image                          Build a Dockerfile (ex. DIR=telnet).
-run                            Run a Dockerfile from the command at the top of the file (ex. DIR=curl).
+image                          Build a Dockerfile (ex. DIR=network-tools).
+run                            Run a Dockerfile from the command at the top of the file (ex. DIR=system-tools).
 test                           Run the tests
 ```
 
