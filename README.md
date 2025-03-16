@@ -1,6 +1,6 @@
 ## dockerfiles
 
-[![make test](https://img.shields.io/github/actions/workflow/status/yakir3/gitbook/main.yml?label=actions&logo=github&logoColor=white)](https://github.com/yakir3/gitbook/actions/workflows/)
+[![DockerHub](https://img.shields.io/github/actions/workflow/status/yakir3/dockerfiles/docker-image.yml?label=actions&logo=github&logoColor=white)](https://github.com/yakir3/dockerfiles/actions/workflows/docker-image.yml)
 
 
 This is a repo to hold various Dockerfiles for images.
