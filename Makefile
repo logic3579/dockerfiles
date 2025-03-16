@@ -19,40 +19,33 @@ __check_defined = $(if $(value $1),, \
 				  required by target '$@')))
 
 .PHONY: all test build image clean run
-all: build clean  ## build and clean
+all: build clean  ## Build all and push.
 
-test:  ## image, run, clean
-	@echo "Testing..."
-	@echo $(REGISTRY)
-	@echo $(PROJECT)
 
 build:  ## Builds all the dockerfiles in the repository.
 	@echo "Building all image"
 	@$(CURDIR)/build-all.sh
 
-image:  ## Build a Dockerfile (ex. DIR=telnet).
-	@echo "Build a image"
-	@:$(call check_defined, DIR, directory of the Dockefile)
-	$(CONTAINER_COMMAND) $(REGISTRY)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION) ./$(DIR)
-
-run:  ## Run a Dockerfile from the command at the top of the file (ex. DIR=curl).
-	@echo "Run cantainer"
-	@:$(call check_defined, DIR, directory of the Dockefile)
-	@$(CURDIR)/run.sh $(DIR)
-
-clean:  ## Cleaning up
+clean:  ## Cleaning up.
 	@echo "Cleaning up"
 	${CONTAINER_COMMAND} image prune --force || true;\
 	${CONTAINER_COMMAND} rmi ${CONTAINER_IMAGE} --force || true
 
+image:  ## Build a Dockerfile (ex. DIR=network-tools).
+	@echo "Build a image"
+	@:$(call check_defined, DIR, directory of the Dockefile)
+	$(CONTAINER_COMMAND) $(REGISTRY)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION) ./$(DIR)
+
+run:  ## Run a Dockerfile from the command at the top of the file (ex. DIR=system-tools).
+	@echo "Run cantainer"
+	@:$(call check_defined, DIR, directory of the Dockefile)
+	@$(CURDIR)/run.sh $(DIR)
+
+test:  ## Run the tests.
+	@echo "Testing..."
+	@echo $(REGISTRY)
+	@echo $(PROJECT)
+
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
-
-
-
-
-
-
-
