@@ -64,8 +64,8 @@ jobs:
         with:
           context: ./${{ matrix.directory }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          # tags: ${{ github.actor }}/${{ matrix.directory }}:latest
+          # tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.directory }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           provenance: ${{ github.event_name != 'pull_request' }}
           sbom: ${{ github.event_name != 'pull_request' }}
