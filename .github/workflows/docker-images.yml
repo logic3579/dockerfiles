@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: [network-tools, system-tools]
+        directory: [ipsec-vpn-server, network-tools, system-tools,v2fly-core,wireguard]
         registry: [acr, dockerhub]
     permissions:
       contents: read
