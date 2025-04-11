@@ -12,11 +12,33 @@ env:
   IMAGE_OWNER: ${{ github.repository_owner }}
   
 jobs:
+  find-docker-dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      dir-list: ${{ steps.find-dirs.outputs.dirs }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find Docker directories
+        id: find-dirs
+        run: |
+          # find all contains Dockerfile directories then generate JSON list
+          dirs=$(find . -name Dockerfile -exec dirname {} \; | sed 's|^./||' | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          echo "dirs=$dirs" >> $GITHUB_OUTPUT
+          echo "::notice::Found Docker directories: $dirs"
+
   build-and-push:
+    needs: find-docker-dirs
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: [ipsec-vpn-server, network-tools, system-tools,v2fly-core,wireguard]
+        directory: ${{ fromJson(needs.find-docker-dirs.outputs.dir-list) }}
         registry: [acr, dockerhub]
     permissions:
       contents: read
