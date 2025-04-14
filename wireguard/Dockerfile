@@ -1,4 +1,4 @@
-# command to run wireguard
+# command to run
 # docker run \
 #     --name wireguard
 #     linuxserver/wireguard

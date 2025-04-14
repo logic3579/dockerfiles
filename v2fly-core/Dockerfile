@@ -1,4 +1,4 @@
-# command to run v2fly-core
+# command to run
 # docker run \
 #     --name v2ray \
 #     -v /opt/v2ray/server.json:/etc/v2ray/config.json \
