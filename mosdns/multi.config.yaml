@@ -1,0 +1,30 @@
+log:
+  level: info
+
+plugins:
+  - tag: main
+    type: sequence
+    args:
+      - matches:             # 如果
+          - qname &./oisd_dbl_basic.txt # 如果请求的域名在广告列表内。
+        exec: reject 3       # 执行 直接返回 NXDOMAIN(3) 屏蔽。
+      - exec: cache 1024     # 然后。查找 cache。
+      - matches:             # 如果
+          - has_resp         # 有应答了(上一步 cache 找到应答)
+        exec: accept         # 结束。
+
+      # 上一步没有找到缓存，就会到这一步，转发至 Google 获取应答。
+      - exec: forward https://8.8.8.8/dns-query
+      # sequence 结束(被 reject，accept，或者运行到末尾)后就会返回调用者。在这个配置文件中
+      # 调用者是下面的服务器。服务器就会返回应答至客户端。
+
+
+  # 启动 udp 和 tcp 服务器。
+  - type: udp_server
+    args:
+      entry: main # 收到的请求会执行上面的逻辑
+      listen: 0.0.0.0:53
+  - type: tcp_server
+    args:
+      entry: main
+      listen: 0.0.0.0:53
