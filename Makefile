@@ -1,4 +1,4 @@
-MAINTAINER = yakir3
+MAINTAINER = logic3579
 APP_NAME := livestream-exporter
 APP_VERSION := $(shell git rev-parse --short HEAD)
 APP_PORT ?= 8080

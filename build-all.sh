@@ -4,7 +4,7 @@ set -o pipefail
 
 CONTAINER_CMD=$(command -v docker || command -v podman)
 SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
-REPO_URL="${REPO_URL:-docker.io/yakir3}"
+REPO_URL="${REPO_URL:-docker.io/logic3579}"
 JOBS=${JOBS:-2}
 
 ERRORS="$(pwd)/errors"

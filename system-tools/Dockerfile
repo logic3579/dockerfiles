@@ -1,9 +1,12 @@
 # command to run system-tools
-# docker run -it --rm --name test -d yakir3/system-tools 
+# docker run -it \
+#    --rm \
+#    --name system-tools \
+#    -d logic3579/system-tools 
 #
 
 FROM ubuntu:devel
-MAINTAINER Yakir
+MAINTAINER Logic
 
 RUN apt update && apt install -y \
     dstat \
