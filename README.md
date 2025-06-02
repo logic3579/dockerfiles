@@ -1,12 +1,12 @@
 ## dockerfiles
 
-[![DockerHub](https://img.shields.io/github/actions/workflow/status/logic3579/dockerfiles/docker-images.yml?label=actions&logo=github&logoColor=white)](https://github.com/logic3579/dockerfiles/actions/workflows/docker-images.yml)
-
+[![Build and Push Container Images](https://github.com/logic3579/dockerfiles/actions/workflows/docker-images.yml/badge.svg)](https://github.com/logic3579/dockerfiles/actions/workflows/docker-images.yml)
 
 This is a repo to hold various Dockerfiles for images.
 
 
 ## Usase
+
 ### Using `Makefile`
 
 ```
