@@ -7,16 +7,13 @@ REGISTRY ?= docker.io
 PROJECT ?= project
 IMAGE_NAME = ${REGISTRY}/${PROJECT}/${APP_NAME}:${APP_VERSION}
 
-# pcheck container runtime
-ifeq ($(CONTAINER_COMMAND),none)
-    $(error "Command <podman> or <docker> not found!")
-endif
-
 check_defined = $(strip $(foreach 1,$1, \
 				$(call __check_defined,$1,$(strip $(value 2)))))
 __check_defined = $(if $(value $1),, \
 				  $(error Undefined $1$(if $2, ($2))$(if $(value @), \
 				  required by target '$@')))
+check_container = $(if $(filter none,$(CONTAINER_COMMAND)), \
+				  $(error Command <podman> or <docker> not found!))
 
 .PHONY: all test build image clean run
 all: build clean  ## Build all and push.
@@ -28,12 +25,14 @@ build:  ## Builds all the dockerfiles in the repository.
 
 clean:  ## Cleaning up.
 	@echo "Cleaning up"
+	@:$(call check_container)
 	${CONTAINER_COMMAND} image prune --force || true;\
 	${CONTAINER_COMMAND} rmi ${CONTAINER_IMAGE} --force || true
 
 image:  ## Build a Dockerfile (ex. DIR=network-tools).
 	@echo "Build a image"
 	@:$(call check_defined, DIR, directory of the Dockefile)
+	@:$(call check_container)
 	$(CONTAINER_COMMAND) build -t $(REGISTRY)/$(PROJECT)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION) ./$(DIR)
 
 run:  ## Run a Dockerfile from the command at the top of the file (ex. DIR=system-tools).

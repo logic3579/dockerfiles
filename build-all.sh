@@ -96,7 +96,7 @@ main(){
         echo "Running in parallel with ${JOBS} jobs."
         parallel --tag --verbose --ungroup -j"${JOBS}" "$SCRIPT" dofile "{1}" ::: "${files[@]}"
 
-        if [[ ! -f "$ERRORS" ]]; then
+        if [[ ! -s "$ERRORS" ]]; then
                 echo "No errors."
         else
                 echo "[ERROR] Some images did not build correctly, see below." >&2
