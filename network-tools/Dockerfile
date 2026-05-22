@@ -4,7 +4,7 @@
 #    --name network-tools\
 #    -d logic3579/network-tools
 
-FROM debian:sid-slim
+FROM debian:bookworm-slim
 MAINTAINER Logic
 
 RUN apt update && apt install -y \

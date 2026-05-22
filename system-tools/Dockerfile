@@ -5,7 +5,7 @@
 #    -d logic3579/system-tools 
 #
 
-FROM ubuntu:devel
+FROM ubuntu:24.04
 MAINTAINER Logic
 
 RUN apt update && apt install -y \
