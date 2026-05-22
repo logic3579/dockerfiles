@@ -34,7 +34,7 @@ clean:  ## Cleaning up.
 image:  ## Build a Dockerfile (ex. DIR=network-tools).
 	@echo "Build a image"
 	@:$(call check_defined, DIR, directory of the Dockefile)
-	$(CONTAINER_COMMAND) $(REGISTRY)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION) ./$(DIR)
+	$(CONTAINER_COMMAND) build -t $(REGISTRY)/$(PROJECT)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION) ./$(DIR)
 
 run:  ## Run a Dockerfile from the command at the top of the file (ex. DIR=system-tools).
 	@echo "Run cantainer"

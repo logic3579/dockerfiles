@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 env:
   ACR_REGISTRY: crpi-fkl1s7fwluzapj2o.cn-hongkong.personal.cr.aliyuncs.com
@@ -29,7 +30,7 @@ jobs:
         id: find-dirs
         run: |
           # find all contains Dockerfile directories then generate JSON list
-          dirs=$(find . -name Dockerfile -exec dirname {} \; | sed 's|^./||' | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          dirs=$(find . -name Dockerfile -exec dirname {} \; | sed 's|^./||' | sort | jq -R -s -c 'split("\n") | map(select(. != ""))')
           echo "dirs=$dirs" >> $GITHUB_OUTPUT
           echo "::notice::Found Docker directories: $dirs"
 
