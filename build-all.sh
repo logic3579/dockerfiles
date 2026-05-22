@@ -2,12 +2,37 @@
 set -e
 set -o pipefail
 
-CONTAINER_CMD=$(command -v docker || command -v podman)
+if command -v docker >/dev/null 2>&1; then
+        CONTAINER_CMD=$(command -v docker)
+        CONTAINER_RUNTIME=docker
+elif command -v podman >/dev/null 2>&1; then
+        CONTAINER_CMD=$(command -v podman)
+        CONTAINER_RUNTIME=podman
+else
+        echo "ERROR: docker or podman is required." >&2
+        exit 1
+fi
+
+if ! command -v parallel >/dev/null 2>&1; then
+        echo "ERROR: GNU parallel is required." >&2
+        exit 1
+fi
+
 SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 REPO_URL="${REPO_URL:-docker.io/logic3579}"
 JOBS=${JOBS:-2}
+ERRORS=$(mktemp)
+trap 'rm -f "$ERRORS"' EXIT
 
-ERRORS="$(pwd)/errors"
+push_image(){
+        image=$1
+
+        if [[ "$CONTAINER_RUNTIME" == "docker" ]]; then
+                "${CONTAINER_CMD}" push --disable-content-trust=false "$image"
+        else
+                "${CONTAINER_CMD}" push "$image"
+        fi
+}
 
 
 build_and_push(){
@@ -27,7 +52,7 @@ build_and_push(){
         # absolutely no reason
         n=0
         until [ $n -ge 5 ]; do
-                "${CONTAINER_CMD}" push --disable-content-trust=false "${REPO_URL}/${base}:${suite}" && break
+                push_image "${REPO_URL}/${base}:${suite}" && break
                 echo "Try #$n failed... sleeping for 15 seconds"
                 n=$((n+1))
                 sleep 15
@@ -36,7 +61,7 @@ build_and_push(){
         # also push the tag latest for "stable" (chrome), "tools" (wireguard) or "3.5" tags for zookeeper
         if [[ "$suite" == "stable" ]] || [[ "$suite" == "3.6" ]] || [[ "$suite" == "tools" ]]; then
                 "${CONTAINER_CMD}" tag "${REPO_URL}/${base}:${suite}" "${REPO_URL}/${base}:latest"
-                "${CONTAINER_CMD}" push --disable-content-trust=false "${REPO_URL}/${base}:latest"
+                push_image "${REPO_URL}/${base}:latest"
         fi
 }
 
