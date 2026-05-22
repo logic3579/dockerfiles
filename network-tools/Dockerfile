@@ -4,20 +4,29 @@
 #    --name network-tools\
 #    -d logic3579/network-tools
 
-FROM debian:bookworm-slim
+FROM alpine:3.23
 MAINTAINER Logic
 
-RUN apt update && apt install -y \
+RUN apk add --no-cache \
     apache2-utils \
+    bind-tools \
+    busybox-extras \
+    ca-certificates \
     curl \
-    inetutils-ping \
+    drill \
+    ethtool \
+    iperf3 \
     iproute2 \
+    iputils \
+    mtr \
     netcat-openbsd \
+    nmap \
+    openssh-client-default \
+    openssl \
+    socat \
     tcpdump \
-    telnet \
     traceroute \
     wget \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+    whois
 
-CMD [ "bash" ]
+CMD [ "sh" ]

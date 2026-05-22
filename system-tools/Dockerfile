@@ -5,19 +5,30 @@
 #    -d logic3579/system-tools 
 #
 
-FROM ubuntu:24.04
+FROM alpine:3.23
 MAINTAINER Logic
 
-RUN apt update && apt install -y \
-    dstat \
+RUN apk add --no-cache \
+    bash \
+    bmon \
+    btop \
+    coreutils \
+    file \
+    findutils \
     glances \
+    grep \
+    htop \
     iftop \
     iotop \
+    jq \
+    less \
+    ltrace \
     lsof \
     nload \
-    procps \
+    procps-ng \
+    psmisc \
+    strace \
     sysstat \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+    util-linux
 
-CMD [ "bash" ]
+CMD [ "sh" ]
