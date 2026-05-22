@@ -28,6 +28,8 @@ znc/conf/
 *.swp
 *.swo
 
+.worktrees/
+
 itunes/iTunesSetup.exe
 yubikey/
 kiwi-builder/artifacts
