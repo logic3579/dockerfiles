@@ -36,6 +36,6 @@
 ## CI
 
 - `.github/workflows/docker-images.yml` builds and pushes to ACR, DockerHub, and ghcr.io.
-- Multi-arch: `linux/amd64,linux/arm64` (via `setup-qemu-action` + `build-push-action` `platforms:`).
+- Multi-arch: `linux/amd64,linux/arm64` by default (via `setup-qemu-action` + `build-push-action` `platforms:`). Per-directory overrides live in the `Determine build platforms` step — e.g. `tcping` is amd64-only because its upstream base image (`pouriyajamshidi/tcping`) isn't published multi-arch.
 - Tags pushed per image: `:<short_sha>` and `:latest`.
 - Pull requests build but do not push.
