@@ -3,9 +3,10 @@
 #    --rm \
 #    --name network-tools\
 #    -d logic3579/network-tools
+#
 
 FROM alpine:3.23
-MAINTAINER Logic
+MAINTAINER logic3579
 
 RUN apk add --no-cache \
     apache2-utils \

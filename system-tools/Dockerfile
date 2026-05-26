@@ -6,7 +6,7 @@
 #
 
 FROM alpine:3.23
-MAINTAINER Logic
+MAINTAINER logic3579
 
 RUN apk add --no-cache \
     bash \

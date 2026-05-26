@@ -8,8 +8,11 @@ if command -v docker >/dev/null 2>&1; then
 elif command -v podman >/dev/null 2>&1; then
         CONTAINER_CMD=$(command -v podman)
         CONTAINER_RUNTIME=podman
+elif command -v container >/dev/null 2>&1; then
+        CONTAINER_CMD=$(command -v container)
+        CONTAINER_RUNTIME=container
 else
-        echo "ERROR: docker or podman is required." >&2
+        echo "ERROR: docker, podman or container is required." >&2
         exit 1
 fi
 
@@ -27,10 +30,21 @@ trap 'rm -f "$ERRORS"' EXIT
 push_image(){
         image=$1
 
-        if [[ "$CONTAINER_RUNTIME" == "docker" ]]; then
-                "${CONTAINER_CMD}" push --disable-content-trust=false "$image"
+        case "$CONTAINER_RUNTIME" in
+                docker)    "${CONTAINER_CMD}" push --disable-content-trust=false "$image" ;;
+                container) "${CONTAINER_CMD}" image push "$image" ;;
+                *)         "${CONTAINER_CMD}" push "$image" ;;
+        esac
+}
+
+tag_image(){
+        src=$1
+        dst=$2
+
+        if [[ "$CONTAINER_RUNTIME" == "container" ]]; then
+                "${CONTAINER_CMD}" image tag "$src" "$dst"
         else
-                "${CONTAINER_CMD}" push "$image"
+                "${CONTAINER_CMD}" tag "$src" "$dst"
         fi
 }
 
@@ -41,7 +55,11 @@ build_and_push(){
         build_dir=$3
 
         echo "Building ${REPO_URL}/${base}:${suite} for context ${build_dir}"
-        "${CONTAINER_CMD}" build --rm --force-rm -t "${REPO_URL}/${base}:${suite}" "${build_dir}" || return 1
+        if [[ "$CONTAINER_RUNTIME" == "container" ]]; then
+                "${CONTAINER_CMD}" build -f "${build_dir}/Dockerfile" -t "${REPO_URL}/${base}:${suite}" "${build_dir}" || return 1
+        else
+                "${CONTAINER_CMD}" build --rm --force-rm -t "${REPO_URL}/${base}:${suite}" "${build_dir}" || return 1
+        fi
 
         # on successful build, push the image
         echo "                       ---                                   "
@@ -60,7 +78,7 @@ build_and_push(){
 
         # also push the tag latest for "stable" (chrome), "tools" (wireguard) or "3.5" tags for zookeeper
         if [[ "$suite" == "stable" ]] || [[ "$suite" == "3.6" ]] || [[ "$suite" == "tools" ]]; then
-                "${CONTAINER_CMD}" tag "${REPO_URL}/${base}:${suite}" "${REPO_URL}/${base}:latest"
+                tag_image "${REPO_URL}/${base}:${suite}" "${REPO_URL}/${base}:latest"
                 push_image "${REPO_URL}/${base}:latest"
         fi
 }

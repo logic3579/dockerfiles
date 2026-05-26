@@ -1,50 +1,45 @@
-MAINTAINER = logic3579
-APP_NAME := livestream-exporter
 APP_VERSION := $(shell git rev-parse --short HEAD)
-APP_PORT ?= 8080
-CONTAINER_COMMAND := $(shell command -v podman 2> /dev/null || command -v docker 2> /dev/null || echo "none")
+CONTAINER_COMMAND := $(shell command -v podman 2> /dev/null || command -v docker 2> /dev/null || command -v container 2> /dev/null || echo "none")
+CONTAINER_RUNTIME := $(notdir $(CONTAINER_COMMAND))
+FORCE_FLAG := $(if $(filter container,$(CONTAINER_RUNTIME)),,--force)
 REGISTRY ?= docker.io
-PROJECT ?= project
-IMAGE_NAME = ${REGISTRY}/${PROJECT}/${APP_NAME}:${APP_VERSION}
+PROJECT ?= logic3579
+image_ref = $(REGISTRY)/$(PROJECT)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION)
 
-check_defined = $(strip $(foreach 1,$1, \
-				$(call __check_defined,$1,$(strip $(value 2)))))
-__check_defined = $(if $(value $1),, \
-				  $(error Undefined $1$(if $2, ($2))$(if $(value @), \
-				  required by target '$@')))
+check_dir = $(if $(DIR),,$(error DIR is required, e.g. DIR=network-tools))
 check_container = $(if $(filter none,$(CONTAINER_COMMAND)), \
-				  $(error Command <podman> or <docker> not found!))
+				  $(error Command <podman>, <docker> or <container> not found!))
 
-.PHONY: all test build image clean run
-all: build clean  ## Build all and push.
+.DEFAULT_GOAL := help
+.PHONY: all build clean image run info help
 
+all: build  ## Build and push all images.
 
-build:  ## Builds all the dockerfiles in the repository.
-	@echo "Building all image"
+build:  ## Builds all the Dockerfiles in the repository.
+	@echo "Building all images"
 	@$(CURDIR)/build-all.sh
 
-clean:  ## Cleaning up.
+clean:  ## Clean up images. Pass DIR=<dir> to also remove that image.
 	@echo "Cleaning up"
-	@:$(call check_container)
-	${CONTAINER_COMMAND} image prune --force || true;\
-	${CONTAINER_COMMAND} rmi ${CONTAINER_IMAGE} --force || true
+	$(call check_container)
+	${CONTAINER_COMMAND} image prune $(FORCE_FLAG) || true
+	$(if $(DIR),${CONTAINER_COMMAND} image rm $(image_ref) $(FORCE_FLAG) || true)
 
 image:  ## Build a Dockerfile (ex. DIR=network-tools).
-	@echo "Build a image"
-	@:$(call check_defined, DIR, directory of the Dockefile)
-	@:$(call check_container)
-	$(CONTAINER_COMMAND) build -t $(REGISTRY)/$(PROJECT)/$(subst /,:,$(patsubst %/,%,$(DIR))):$(APP_VERSION) ./$(DIR)
+	@echo "Build an image"
+	$(call check_dir)
+	$(call check_container)
+	$(CONTAINER_COMMAND) build -f ./$(DIR)/Dockerfile -t $(image_ref) ./$(DIR)
 
-run:  ## Run a Dockerfile from the command at the top of the file (ex. DIR=system-tools).
-	@echo "Run cantainer"
-	@:$(call check_defined, DIR, directory of the Dockefile)
+run:  ## Run a Dockerfile from the command at the top of the file (ex. DIR=network-tools).
+	@echo "Run container"
+	$(call check_dir)
 	@$(CURDIR)/run.sh $(DIR)
 
-test:  ## Run the tests.
-	@echo "Testing..."
-	@echo $(REGISTRY)
-	@echo $(PROJECT)
+info:  ## Print registry and project settings.
+	@echo "REGISTRY=$(REGISTRY)"
+	@echo "PROJECT=$(PROJECT)"
+	@echo "CONTAINER_RUNTIME=$(CONTAINER_RUNTIME)"
 
-.PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

@@ -46,8 +46,8 @@ Run one image using the `docker run` example from the Dockerfile header:
 make run DIR=system-tools
 ```
 
-Run the lightweight test target:
+Print registry and runtime settings:
 
 ```bash
-make test
+make info
 ```
