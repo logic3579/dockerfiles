@@ -7,6 +7,9 @@
 - This repository maintains Dockerfiles for utility and networking images.
 - Prefer stable, lightweight base images for debug containers.
 - Use Alpine stable tags for compact debug images when package coverage is sufficient.
+- For upstream GHCR wrapper images, pin explicit stable package tags instead of floating `latest`.
+- `xray-core` tracks `ghcr.io/xtls/xray-core`; the stable package tag omits the release-name `v` prefix (e.g. release `v26.3.27` maps to image tag `26.3.27`).
+- `sing-box` tracks `ghcr.io/sagernet/sing-box`; the stable package tag keeps the `v` prefix (e.g. `v1.13.12`).
 - Do not include unrelated generated files or local secrets in commits.
 
 ## Container Runtimes

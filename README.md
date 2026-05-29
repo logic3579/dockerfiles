@@ -10,9 +10,11 @@ This repository holds Dockerfiles for small utility and networking images.
 - `mosdns`
 - `network-tools`
 - `openvpn`
+- `sing-box`
 - `system-tools`
 - `tcping`
 - `wireguard`
+- `xray-core`
 
 ## Version policy
 
